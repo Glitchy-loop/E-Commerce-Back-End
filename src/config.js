@@ -8,5 +8,6 @@ module.exports = {
     database: process.env.MYSQL_DATABASE,
     port: process.env.MYSQL_PORT
   },
-  serverPort: process.env.SERVER_PORT || 8080
+  serverPort: process.env.SERVER_PORT || 8080,
+  jwtSecret: process.env.JWT_SECRET
 }
