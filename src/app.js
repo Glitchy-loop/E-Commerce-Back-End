@@ -1,5 +1,6 @@
 const express = require('express')
 const cors = require('cors')
+const { serverPort } = require('./config')
 
 const app = express()
 
@@ -14,4 +15,4 @@ app.all('*', (req, res) => {
   return res.status(404).send('Page not found...')
 })
 
-app.listen(8080, console.log(`Server is running...`))
+app.listen(serverPort, console.log(`Server is running on port ${serverPort}`))
