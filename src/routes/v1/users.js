@@ -3,6 +3,11 @@ const mysql = require('mysql2/promise')
 const { mysqlConfig, jwtSecret } = require('../../config')
 const bcrypt = require('bcrypt')
 const jsonwebtoken = require('jsonwebtoken')
+const validation = require('../../middleware/validation')
+const {
+  loginSchema,
+  registrationSchema
+} = require('../../middleware/schemas/userSchemas')
 const router = express.Router()
 
 // Get all users
@@ -20,7 +25,7 @@ router.get('/', async (req, res) => {
 })
 
 // Register new user
-router.post('/register', async (req, res) => {
+router.post('/register', validation(registrationSchema), async (req, res) => {
   try {
     const hash = bcrypt.hashSync(req.body.password, 10)
 
@@ -39,10 +44,10 @@ router.post('/register', async (req, res) => {
     }
 
     const [data] = await connection.execute(`
-        INSERT INTO users (name, email, password, admin)
+        INSERT INTO users (name, email, password, roles)
         VALUES (${mysql.escape(req.body.name)}, ${mysql.escape(
       req.body.email
-    )}, '${hash}', ${mysql.escape(req.body.admin)})
+    )}, '${hash}', ${mysql.escape(req.body.roles)})
         `)
 
     if (!data.insertId || data.affectedRows !== 1) {
@@ -61,7 +66,7 @@ router.post('/register', async (req, res) => {
 })
 
 // User login
-router.post('/login', async (req, res) => {
+router.post('/login', validation(loginSchema), async (req, res) => {
   try {
     const connection = await mysql.createConnection(mysqlConfig)
     const [data] = await connection.execute(`
