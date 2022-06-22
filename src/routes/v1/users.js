@@ -90,6 +90,7 @@ router.post('/login', validation(loginSchema), async (req, res) => {
     return res.status(200).send({
       msg: 'Sucessfully logged in',
       token,
+      roles: data[0].roles,
       accountId: data[0].id
     })
   } catch (err) {
