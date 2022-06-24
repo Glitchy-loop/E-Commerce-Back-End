@@ -71,7 +71,7 @@ router.get('/order/:id', async (req, res) => {
 })
 
 // Get all orders for admin
-router.get('/all', async (req, res) => {
+router.get('/all', isLoggedIn, async (req, res) => {
   try {
     const connection = await mysql.createConnection(mysqlConfig)
     const [data] = await connection.execute(`
@@ -96,14 +96,17 @@ router.get('/all', async (req, res) => {
 })
 
 // Get all orders for customer
-router.get('/customer/:id', async (req, res) => {
+router.get('/customer/:id', isLoggedIn, async (req, res) => {
   try {
     const connection = await mysql.createConnection(mysqlConfig)
     const [data] = await connection.execute(`
-    SELECT orders.id AS orderId, products.title, products.price, orders.timestamp
+    SELECT orders.id AS orderId, users.email, products.title, products.price, orders.timestamp
     FROM orders
-    INNER JOIN products 
-    ON orders.productId=products.id
+      INNER JOIN products 
+        ON orders.productId=products.id
+      INNER JOIN users
+        ON orders.userId=users.id
+
     WHERE ${mysql.escape(req.params.id)}=orders.userId
     `)
 
