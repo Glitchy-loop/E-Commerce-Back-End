@@ -9,5 +9,7 @@ module.exports = {
     port: process.env.MYSQL_PORT
   },
   serverPort: process.env.SERVER_PORT || 8080,
-  jwtSecret: process.env.JWT_SECRET
+  jwtSecret: process.env.JWT_SECRET,
+  strapiUrl: process.env.STRAPI_URL,
+  strapiToken: process.env.STRAPI_TOKEN
 }

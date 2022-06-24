@@ -3,6 +3,7 @@ const cors = require('cors')
 const { serverPort } = require('./config')
 const userRoutes = require('./routes/v1/users')
 const productRoutes = require('./routes/v1/products')
+const orderRoutes = require('./routes/v1/orders')
 
 const app = express()
 
@@ -15,6 +16,7 @@ app.get('/', (req, res) => {
 
 app.use('/v1/users', userRoutes)
 app.use('/v1/products', productRoutes)
+app.use('/v1/orders', orderRoutes)
 
 app.all('*', (req, res) => {
   return res.status(404).send('Page not found...')
