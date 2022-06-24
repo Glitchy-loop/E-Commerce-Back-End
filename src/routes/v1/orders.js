@@ -70,7 +70,8 @@ router.get('/order/:id', async (req, res) => {
   }
 })
 
-router.get('/details', async (req, res) => {
+// Get all orders for admin
+router.get('/all', async (req, res) => {
   try {
     const connection = await mysql.createConnection(mysqlConfig)
     const [data] = await connection.execute(`
@@ -85,6 +86,32 @@ router.get('/details', async (req, res) => {
     if (data.length === 0) {
       await connection.end()
       return res.status(400).send({ err: 'No orders found.' })
+    }
+
+    await connection.end()
+    res.status(200).send(data)
+  } catch (err) {
+    return res.status(500).send({ err: 'Server issue. Try again later.' })
+  }
+})
+
+// Get all orders for customer
+router.get('/customer/:id', async (req, res) => {
+  try {
+    const connection = await mysql.createConnection(mysqlConfig)
+    const [data] = await connection.execute(`
+    SELECT orders.id AS orderId, products.title, products.price, orders.timestamp
+    FROM orders
+    INNER JOIN products 
+    ON orders.productId=products.id
+    WHERE ${mysql.escape(req.params.id)}=orders.userId
+    `)
+
+    if (data.length === 0) {
+      await connection.end()
+      return res
+        .status(400)
+        .send({ err: `No orders found with ID '${req.params.id}'.` })
     }
 
     await connection.end()
