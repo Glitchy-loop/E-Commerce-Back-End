@@ -145,13 +145,14 @@ router.get('/search/:query', async (req, res) => {
     WHERE title LIKE '%${req.params.query}%'
     OR category LIKE '%${req.params.query}%'
     `)
-    console.log(data)
+
     if (data.length === 0) {
+      await connection.end()
       return res.status(400).send({
         err: `No products found with search query: '${req.params.query}'`
       })
     }
-
+    await connection.end()
     return res.status(200).send(data)
   } catch (err) {
     return res.status(500).send({ err: 'Server issue... Try again later.' })
