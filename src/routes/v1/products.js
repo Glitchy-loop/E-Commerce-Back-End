@@ -111,4 +111,31 @@ router.get('/categories', async (req, res) => {
   }
 })
 
+// Delete product by ID
+router.delete('/delete/:id', isLoggedIn, async (req, res) => {
+  try {
+    const connection = await mysql.createConnection(mysqlConfig)
+    const [data] = await connection.execute(`
+      DELETE FROM products
+      WHERE id = ${mysql.escape(req.params.id)}
+    `)
+
+    if (data.affectedRows !== 1) {
+      await connection.end()
+      return res
+        .status(400)
+        .send({
+          err: `There is no product with ID ${mysql.escape(req.params.id)}.`
+        })
+    }
+
+    await connection.end()
+    return res.status(200).send({
+      msg: `Product with ID ${req.params.id} was sucessfully DELETED.`
+    })
+  } catch (err) {
+    return res.status(500).send({ err: 'Server issue... Try again later.' })
+  }
+})
+
 module.exports = router
