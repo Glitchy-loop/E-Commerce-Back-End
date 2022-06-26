@@ -122,17 +122,37 @@ router.delete('/delete/:id', isLoggedIn, async (req, res) => {
 
     if (data.affectedRows !== 1) {
       await connection.end()
-      return res
-        .status(400)
-        .send({
-          err: `There is no product with ID ${mysql.escape(req.params.id)}.`
-        })
+      return res.status(400).send({
+        err: `There is no product with ID ${mysql.escape(req.params.id)}.`
+      })
     }
 
     await connection.end()
     return res.status(200).send({
       msg: `Product with ID ${req.params.id} was sucessfully DELETED.`
     })
+  } catch (err) {
+    return res.status(500).send({ err: 'Server issue... Try again later.' })
+  }
+})
+
+// Get products by search query
+router.get('/search/:query', async (req, res) => {
+  try {
+    const connection = await mysql.createConnection(mysqlConfig)
+    const [data] = await connection.execute(`
+    SELECT * FROM products
+    WHERE title LIKE '%${req.params.query}%'
+    OR category LIKE '%${req.params.query}%'
+    `)
+    console.log(data)
+    if (data.length === 0) {
+      return res.status(400).send({
+        err: `No products found with search query: '${req.params.query}'`
+      })
+    }
+
+    return res.status(200).send(data)
   } catch (err) {
     return res.status(500).send({ err: 'Server issue... Try again later.' })
   }
