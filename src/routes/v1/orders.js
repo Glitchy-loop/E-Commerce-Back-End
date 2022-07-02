@@ -20,31 +20,27 @@ router.get('/', async (req, res) => {
 })
 
 // Add new order
-router.post(
-  '/add',
-  // isLoggedIn,
-  async (req, res) => {
-    try {
-      const connection = await mysql.createConnection(mysqlConfig)
-      const [data] = await connection.execute(`
+router.post('/add', isLoggedIn, async (req, res) => {
+  try {
+    const connection = await mysql.createConnection(mysqlConfig)
+    const [data] = await connection.execute(`
     INSERT INTO orders (userId, productId)
     VALUES (${mysql.escape(req.body.userId)}, ${mysql.escape(
-        req.body.productId
-      )})
+      req.body.productId
+    )})
     `)
 
-      if (!data.insertId || data.affectedRows !== 1) {
-        await connection.end()
-        return res.status(500).send({ err: 'Server issue. Try again later.' })
-      }
-
+    if (!data.insertId || data.affectedRows !== 1) {
       await connection.end()
-      res.status(200).send({ msg: 'Successfully added an order.' })
-    } catch (err) {
       return res.status(500).send({ err: 'Server issue. Try again later.' })
     }
+
+    await connection.end()
+    res.status(200).send({ msg: 'Successfully added an order.' })
+  } catch (err) {
+    return res.status(500).send({ err: 'Server issue. Try again later.' })
   }
-)
+})
 
 // Get order by id
 router.get('/order/:id', async (req, res) => {

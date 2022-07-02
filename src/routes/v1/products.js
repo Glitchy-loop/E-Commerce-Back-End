@@ -30,6 +30,26 @@ router.get('/', async (req, res) => {
   }
 })
 
+// Get all products for cart by ids
+router.get('/cart/:ids', async (req, res) => {
+  try {
+    const connection = await mysql.createConnection(mysqlConfig)
+    const [data] = await connection.execute(`
+    SELECT * FROM products WHERE ID IN (${req.params.ids})
+    `)
+
+    if (data.length === 0) {
+      await connection.end()
+      return res.status(500).send({ err: 'Server issue. Try again later.' })
+    }
+
+    await connection.end()
+    res.status(200).send(data)
+  } catch (err) {
+    return res.status(500).send({ err: 'Server issue. Try again later.' })
+  }
+})
+
 // Add product
 router.post(
   '/add',
