@@ -19,16 +19,39 @@ router.get('/', async (req, res) => {
   }
 })
 
+const createOrderForProduct = async (connection, productsInfos, orderId) => {
+  for (let i = 0; i < productsInfos.length; i++) {
+    let productInfo = productsInfos[i]
+
+    await connection.execute(`
+   INSERT INTO orderToProduct (orderId, productId, quantity)
+   VALUES (
+    ${orderId},
+     ${productInfo.product.id},
+      ${productInfo.quantity}
+      )
+    `)
+    console.log(productInfo.product.inStock - productInfo.quantity)
+    await connection.execute(`
+    UPDATE products
+    SET inStock = ${productInfo.product.inStock - productInfo.quantity}
+    WHERE id = ${mysql.escape(productInfo.product.id)}
+    `)
+  }
+}
+
 // Add new order
 router.post('/add', isLoggedIn, async (req, res) => {
   try {
     const connection = await mysql.createConnection(mysqlConfig)
     const [data] = await connection.execute(`
-    INSERT INTO orders (userId, productId)
-    VALUES (${mysql.escape(req.body.userId)}, ${mysql.escape(
-      req.body.productId
-    )})
+    INSERT INTO orders (userId)
+    VALUES (${mysql.escape(req.body.userId)})
     `)
+
+    const orderId = data.insertId
+
+    await createOrderForProduct(connection, req.body.productsInfos, orderId)
 
     if (!data.insertId || data.affectedRows !== 1) {
       await connection.end()

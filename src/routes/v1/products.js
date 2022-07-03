@@ -21,6 +21,7 @@ router.get('/', async (req, res) => {
     const connection = await mysql.createConnection(mysqlConfig)
     const [data] = await connection.execute(`
     SELECT * FROM products
+    WHERE archived = 0
     `)
 
     await connection.end()
@@ -31,16 +32,17 @@ router.get('/', async (req, res) => {
 })
 
 // Get all products for cart by ids
-router.get('/:ids', async (req, res) => {
+router.get('/list/:ids', async (req, res) => {
   try {
     const connection = await mysql.createConnection(mysqlConfig)
     const [data] = await connection.execute(`
     SELECT * FROM products WHERE ID IN (${req.params.ids})
+    WHERE archived = 0
     `)
 
     if (data.length === 0) {
       await connection.end()
-      return res.status(500).send({ err: 'Server issue. Try again later.' })
+      return res.status(500).send({ err: `No data with IDs ${req.params.ids}` })
     }
 
     await connection.end()
@@ -99,6 +101,7 @@ router.get('/product/:id', async (req, res) => {
     const [data] = await connection.execute(`
       SELECT * FROM products
       WHERE id = ${mysql.escape(req.params.id)}
+      AND archived = 0
       LIMIT 1
     `)
 
@@ -110,7 +113,7 @@ router.get('/product/:id', async (req, res) => {
     }
 
     await connection.end()
-    return res.status(200).send(data)
+    return res.status(200).send(data[0])
   } catch (err) {
     return res.status(500).send({ err: 'Server issue... Try again later.' })
   }
@@ -136,8 +139,9 @@ router.delete('/delete/:id', isLoggedIn, async (req, res) => {
   try {
     const connection = await mysql.createConnection(mysqlConfig)
     const [data] = await connection.execute(`
-      DELETE FROM products
-      WHERE id = ${mysql.escape(req.params.id)}
+    UPDATE products
+    SET archived = 1
+    WHERE id = ${mysql.escape(req.params.id)}
     `)
 
     if (data.affectedRows !== 1) {
@@ -162,7 +166,8 @@ router.get('/search/:query', async (req, res) => {
     const connection = await mysql.createConnection(mysqlConfig)
     const [data] = await connection.execute(`
     SELECT * FROM products
-    WHERE title LIKE '%${req.params.query}%'
+    WHERE archived = 0 AND
+    title LIKE '%${req.params.query}%'
     OR category LIKE '%${req.params.query}%'
     `)
 
