@@ -26,15 +26,17 @@ const createOrderForProduct = async (connection, productsInfos, orderId) => {
     await connection.execute(`
    INSERT INTO orderToProduct (orderId, productId, quantity)
    VALUES (
-    ${orderId},
-     ${productInfo.product.id},
-      ${productInfo.quantity}
+    ${mysql.escape(orderId)},
+     ${mysql.escape(productInfo.product.id)},
+      ${mysql.escape(productInfo.quantity)}
       )
     `)
-    console.log(productInfo.product.inStock - productInfo.quantity)
+
     await connection.execute(`
     UPDATE products
-    SET inStock = ${productInfo.product.inStock - productInfo.quantity}
+    SET inStock = ${mysql.escape(
+      productInfo.product.inStock - productInfo.quantity
+    )}
     WHERE id = ${mysql.escape(productInfo.product.id)}
     `)
   }
