@@ -70,7 +70,7 @@ router.post('/add', isLoggedIn, async (req, res) => {
 })
 
 // Get order by id
-router.get('/order/:id', async (req, res) => {
+router.get('/order/:id', isLoggedIn, async (req, res) => {
   try {
     const connection = await mysql.createConnection(mysqlConfig)
     const [data] = await connection.execute(`
