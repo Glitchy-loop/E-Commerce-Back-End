@@ -61,7 +61,9 @@ router.post('/add', isLoggedIn, async (req, res) => {
     }
 
     await connection.end()
-    res.status(200).send({ msg: 'Successfully added an order.' })
+    res
+      .status(200)
+      .send({ msg: 'Successfully added an order.', orderId: data.insertId })
   } catch (err) {
     return res.status(500).send({ err: 'Server issue. Try again later.' })
   }
@@ -72,9 +74,15 @@ router.get('/order/:id', async (req, res) => {
   try {
     const connection = await mysql.createConnection(mysqlConfig)
     const [data] = await connection.execute(`
-      SELECT * FROM orders
-      WHERE id = ${mysql.escape(req.params.id)}
-      LIMIT 1
+    SELECT orders.id AS orderId, users.email, products.title, products.price, orderToProduct.quantity, orders.timestamp
+    FROM orders
+      INNER JOIN orderToProduct
+        ON orders.id=orderToProduct.orderId
+          INNER JOIN products
+            ON orderToProduct.productId=products.id
+              INNER JOIN users 
+                ON orders.userId = users.id
+    WHERE orders.id = ${mysql.escape(req.params.id)}
     `)
 
     if (data.length === 0) {
