@@ -96,12 +96,14 @@ router.get('/all', isLoggedIn, async (req, res) => {
   try {
     const connection = await mysql.createConnection(mysqlConfig)
     const [data] = await connection.execute(`
-    SELECT orders.id AS orderId, users.email, products.title, products.price, orders.timestamp
+    SELECT orders.id as orderId, users.email, productId, products.title, products.price, quantity, orders.timestamp
     FROM orders
-      INNER JOIN users 
-        ON orders.userId=users.id
-      INNER JOIN products 
-        ON orders.productId=products.id
+      INNER JOIN orderToProduct
+        ON orders.id=orderToProduct.orderId
+        	INNER JOIN products 
+            	ON orderToProduct.productId=products.id
+                	INNER JOIN users 
+                      ON orders.userId = users.id
     `)
 
     if (data.length === 0) {
@@ -121,14 +123,15 @@ router.get('/customer/:id', isLoggedIn, async (req, res) => {
   try {
     const connection = await mysql.createConnection(mysqlConfig)
     const [data] = await connection.execute(`
-    SELECT orders.id AS orderId, users.email, products.title, products.price, orders.timestamp
+    SELECT orders.id as orderId, users.email, productId, products.title, products.price, quantity, orders.timestamp
     FROM orders
-      INNER JOIN products 
-        ON orders.productId=products.id
-      INNER JOIN users
-        ON orders.userId=users.id
-
-    WHERE ${mysql.escape(req.params.id)}=orders.userId
+      INNER JOIN orderToProduct
+        ON orders.id=orderToProduct.orderId
+        	INNER JOIN products 
+            	ON orderToProduct.productId=products.id
+                	INNER JOIN users 
+                      ON orders.userId = users.id
+                      WHERE users.id=${mysql.escape(req.params.id)}
     `)
 
     if (data.length === 0) {
