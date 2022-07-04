@@ -62,12 +62,14 @@ router.post(
     try {
       const connection = await mysql.createConnection(mysqlConfig)
       const [data] = await connection.execute(`
-    INSERT INTO products (img, title, category, price, description)
+    INSERT INTO products (img, title, category, price, description, inStock, archived)
     VALUES ('${req.file.filename}', ${mysql.escape(
         req.body.title
       )},${mysql.escape(req.body.category)},${mysql.escape(
         req.body.price
-      )}, ${mysql.escape(req.body.description)})
+      )}, ${mysql.escape(req.body.description)}
+      , ${mysql.escape(req.body.inStock)}, 0
+      )
     `)
 
       if (!data.insertId || data.affectedRows !== 1) {
@@ -126,6 +128,32 @@ router.get('/categories', async (req, res) => {
     const [data] = await connection.execute(`
       SELECT category FROM products
     `)
+
+    if (data.length === 0) {
+      await connection.end()
+      return res.status(400).send({ err: 'No categories found.' })
+    }
+
+    await connection.end()
+    return res.status(200).send(data)
+  } catch (err) {
+    return res.status(500).send({ err: 'Server issue... Try again later.' })
+  }
+})
+
+// Get product categories by category name
+router.get('/categories/:name', async (req, res) => {
+  try {
+    const connection = await mysql.createConnection(mysqlConfig)
+    const [data] = await connection.execute(`
+      SELECT * FROM products
+      WHERE category = ${mysql.escape(req.params.name)}
+    `)
+
+    if (data.length === 0) {
+      await connection.end()
+      return res.status(400).send({ err: 'No categories found.' })
+    }
 
     await connection.end()
     return res.status(200).send(data)
