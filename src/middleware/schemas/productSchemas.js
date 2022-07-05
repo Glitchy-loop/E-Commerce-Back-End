@@ -5,7 +5,8 @@ const addProductSchema = Joi.object({
   title: Joi.string().trim(),
   category: Joi.string(),
   price: Joi.number(),
-  description: Joi.string()
+  description: Joi.string(),
+  inStock: Joi.number()
 })
 
 module.exports = addProductSchema
