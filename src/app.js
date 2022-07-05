@@ -4,12 +4,8 @@ const { serverPort } = require('./config')
 const userRoutes = require('./routes/v1/users')
 const productRoutes = require('./routes/v1/products')
 const orderRoutes = require('./routes/v1/orders')
-const path = require('path')
-
-var dir = path.join(__dirname, 'public')
 
 const app = express()
-app.use(express.static(dir))
 
 app.use(express.json())
 app.use(cors())

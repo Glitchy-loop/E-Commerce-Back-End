@@ -7,7 +7,7 @@ const addProductSchema = require('../../middleware/schemas/productSchemas')
 const validation = require('../../middleware/validation')
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, './public'),
+  destination: (req, file, cb) => cb(null, './images'),
   filename: (req, file, cb) => cb(null, `${new Date().getTime()}.jpg`)
 })
 
@@ -88,7 +88,7 @@ router.post(
 // Get product image by img ID
 router.get('/img/:id', (req, res) => {
   try {
-    let reqPath = path.join(__dirname, '../../../public')
+    let reqPath = path.join(__dirname, '../../../images')
     const image = `${reqPath}/${req.params.id}`
     res.sendFile(image)
   } catch (err) {
