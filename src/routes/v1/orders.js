@@ -12,6 +12,12 @@ router.get('/', async (req, res) => {
     const [data] = await connection.execute(`
     SELECT * FROM orders
     `)
+
+    if (data.length === 0) {
+      await connection.end()
+      return res.status(400).send({ err: 'There are no orders.' })
+    }
+
     await connection.end()
     res.status(200).send(data)
   } catch (err) {
@@ -116,7 +122,7 @@ router.get('/all', isLoggedIn, async (req, res) => {
 
     if (data.length === 0) {
       await connection.end()
-      return res.status(400).send({ err: 'No orders found.' })
+      return res.status(400).send({ err: 'There are no orders.' })
     }
 
     await connection.end()
