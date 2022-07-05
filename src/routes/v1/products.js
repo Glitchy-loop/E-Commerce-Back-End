@@ -85,7 +85,7 @@ router.post(
   }
 )
 
-// Get product image by img id
+// Get product image by img ID
 router.get('/img/:id', (req, res) => {
   try {
     let reqPath = path.join(__dirname, '../../../images')
@@ -96,7 +96,7 @@ router.get('/img/:id', (req, res) => {
   }
 })
 
-// Get product by id
+// Get product by ID
 router.get('/product/:id', async (req, res) => {
   try {
     const connection = await mysql.createConnection(mysqlConfig)
