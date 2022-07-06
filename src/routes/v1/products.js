@@ -7,7 +7,7 @@ const isLoggedIn = require('../../middleware/auth')
 // const validation = require('../../middleware/validation')
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, './images'),
+  destination: (req, file, cb) => cb(null, './src/images'), // TODO
   filename: (req, file, cb) => cb(null, `${new Date().getTime()}.jpg`)
 })
 
@@ -93,7 +93,7 @@ router.post(
 // Get product image by img ID
 router.get('/img/:id', (req, res) => {
   try {
-    let reqPath = path.join(__dirname, '../../../images')
+    let reqPath = path.join(__dirname, '../../../images') // TODO
     const image = `${reqPath}/${req.params.id}`
     res.sendFile(image)
   } catch (err) {
