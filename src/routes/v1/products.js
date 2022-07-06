@@ -59,13 +59,13 @@ router.post(
   upload.array('img'),
   async (req, res) => {
     try {
-      await s3Upload(req.files)
+      const results = await s3Upload(req.files)
       // console.log(req.files)
       const connection = await mysql.createConnection(mysqlConfig)
       const [data] = await connection.execute(`
       INSERT INTO products (img, title, category, price, description, inStock, archived)
       VALUES (
-        '${req.files.originalname}', ${mysql.escape(
+        '${results[0].key.split('/').pop()}', ${mysql.escape(
         req.body.title
       )},${mysql.escape(req.body.category)},${mysql.escape(
         req.body.price
