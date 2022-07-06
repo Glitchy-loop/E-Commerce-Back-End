@@ -3,18 +3,15 @@ const mysql = require('mysql2/promise')
 const { mysqlConfig } = require('../../config')
 const multer = require('multer')
 const isLoggedIn = require('../../middleware/auth')
-// const addProductSchema = require('../../middleware/schemas/productSchemas')
-// const validation = require('../../middleware/validation')
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, './src/images'), // TODO
-  filename: (req, file, cb) => cb(null, `${new Date().getTime()}.jpg`)
-})
-
+const addProductSchema = require('../../middleware/schemas/productSchemas')
+const validation = require('../../middleware/validation')
 const path = require('path')
 const { s3Upload } = require('../../middleware/s3Service')
-const upload = multer({ storage })
 const router = express.Router()
+
+const storage = multer.memoryStorage()
+
+const upload = multer({ storage })
 
 // Get all products
 router.get('/', async (req, res) => {
@@ -53,39 +50,39 @@ router.get('/list/:ids', async (req, res) => {
   }
 })
 
-// Add product
 router.post(
   '/add',
-  // isLoggedIn,
-  // validation(addProductSchema),
-  upload.array('file'),
+  isLoggedIn,
+  validation(addProductSchema),
+  upload.array('img'),
   async (req, res) => {
     try {
-      //   const connection = await mysql.createConnection(mysqlConfig)
-      //   const [data] = await connection.execute(`
-      // INSERT INTO products (img, title, category, price, description, inStock, archived)
-      // VALUES ('${req.file.filename}', ${mysql.escape(
-      //     req.body.title
-      //   )},${mysql.escape(req.body.category)},${mysql.escape(
-      //     req.body.price
-      //   )}, ${mysql.escape(req.body.description)}
-      //   , ${mysql.escape(req.body.inStock)}, 0
-      //   )
-      // `)
+      const results = await s3Upload(req.files)
+      // console.log(req.files)
+      const connection = await mysql.createConnection(mysqlConfig)
+      const [data] = await connection.execute(`
+      INSERT INTO products (img, title, category, price, description, inStock, archived)
+      VALUES (
+        '${results[0].key.split('/').pop()}', ${mysql.escape(
+        req.body.title
+      )},${mysql.escape(req.body.category)},${mysql.escape(
+        req.body.price
+      )}, ${mysql.escape(req.body.description)}
+        , ${mysql.escape(req.body.inStock)}, 0
+        )
+      `)
 
-      //   if (!data.insertId || data.affectedRows !== 1) {
-      //     await connection.end()
-      //     return res.status(500).send({ err: 'Server issue. Try again later.' })
-      //   }
+      if (!data.insertId || data.affectedRows !== 1) {
+        await connection.end()
+        return res.status(500).send({ err: 'Server issue. Try again later.' })
+      }
 
-      const file = req.files[0]
-      const result = await s3Upload(file)
-      console.log(result)
-      return res.send(result)
-      //   await connection.end()
-      // return res.status(200).send({ msg: 'Successfully added a product.' })
+      await connection.end()
+      return res
+        .status(200)
+        .send({ msg: 'Successfully added a product.', results })
     } catch (err) {
-      return res.status(500).send({ err: 'Server issue. Try again later.' })
+      console.log(err)
     }
   }
 )

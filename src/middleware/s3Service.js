@@ -1,14 +1,14 @@
 const { S3 } = require('aws-sdk')
-const { bucketName } = require('../config')
 
-exports.s3Upload = async file => {
+exports.s3Upload = async files => {
   const s3 = new S3()
 
-  const param = {
-    Bucket: bucketName,
-    Key: `images/${new Date().getTime()}`,
-    Body: file.buffer
-  }
-
-  return await s3.upload(param).promise()
+  const params = files.map(file => {
+    return {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: `images/${`${new Date().getTime()}.jpg`}`,
+      Body: file.buffer
+    }
+  })
+  return await Promise.all(params.map(param => s3.upload(param).promise()))
 }
