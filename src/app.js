@@ -21,4 +21,7 @@ app.all('*', (req, res) => {
   return res.status(404).send('Page not found...')
 })
 
-app.listen(serverPort, console.log(`Server is running on port ${serverPort}`))
+app.listen(
+  serverPort || 5000,
+  console.log(`Server is running on port ${serverPort}`)
+)
