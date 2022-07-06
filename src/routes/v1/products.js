@@ -78,9 +78,7 @@ router.post(
       }
 
       await connection.end()
-      return res
-        .status(200)
-        .send({ msg: 'Successfully added a product.', results })
+      return res.status(200).send({ msg: 'Successfully added a product.' })
     } catch (err) {
       console.log(err)
     }
