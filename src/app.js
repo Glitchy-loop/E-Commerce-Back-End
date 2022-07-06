@@ -4,6 +4,7 @@ const cors = require('cors')
 const userRoutes = require('./routes/v1/users')
 const productRoutes = require('./routes/v1/products')
 const orderRoutes = require('./routes/v1/orders')
+
 const app = express()
 
 app.use(express.json())
@@ -12,9 +13,7 @@ app.use(cors())
 app.get('/', (req, res) => {
   return res.status(200).send('Server is running...')
 })
-
-app.use(express.static('images'))
-
+app.use('/images', express.static('images'))
 app.use('/v1/users', userRoutes)
 app.use('/v1/products', productRoutes)
 app.use('/v1/orders', orderRoutes)

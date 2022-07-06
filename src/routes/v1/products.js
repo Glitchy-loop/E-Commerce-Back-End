@@ -12,6 +12,7 @@ const storage = multer.diskStorage({
 })
 
 const path = require('path')
+const { s3Upload } = require('../../middleware/s3Service')
 const upload = multer({ storage })
 const router = express.Router()
 
@@ -55,30 +56,35 @@ router.get('/list/:ids', async (req, res) => {
 // Add product
 router.post(
   '/add',
-  isLoggedIn,
-  validation(addProductSchema),
-  upload.single('img'),
+  // isLoggedIn,
+  // validation(addProductSchema),
+  upload.array('file'),
   async (req, res) => {
     try {
-      const connection = await mysql.createConnection(mysqlConfig)
-      const [data] = await connection.execute(`
-    INSERT INTO products (img, title, category, price, description, inStock, archived)
-    VALUES ('${req.file.filename}', ${mysql.escape(
-        req.body.title
-      )},${mysql.escape(req.body.category)},${mysql.escape(
-        req.body.price
-      )}, ${mysql.escape(req.body.description)}
-      , ${mysql.escape(req.body.inStock)}, 0
-      )
-    `)
+      //   const connection = await mysql.createConnection(mysqlConfig)
+      //   const [data] = await connection.execute(`
+      // INSERT INTO products (img, title, category, price, description, inStock, archived)
+      // VALUES ('${req.file.filename}', ${mysql.escape(
+      //     req.body.title
+      //   )},${mysql.escape(req.body.category)},${mysql.escape(
+      //     req.body.price
+      //   )}, ${mysql.escape(req.body.description)}
+      //   , ${mysql.escape(req.body.inStock)}, 0
+      //   )
+      // `)
 
-      if (!data.insertId || data.affectedRows !== 1) {
-        await connection.end()
-        return res.status(500).send({ err: 'Server issue. Try again later.' })
-      }
+      //   if (!data.insertId || data.affectedRows !== 1) {
+      //     await connection.end()
+      //     return res.status(500).send({ err: 'Server issue. Try again later.' })
+      //   }
 
-      await connection.end()
-      return res.status(200).send({ msg: 'Successfully added a product.' })
+      const file = req.files[0]
+      console.log(file)
+      const result = await s3Upload(file)
+      console.log(result)
+      res.json({ result })
+      //   await connection.end()
+      // return res.status(200).send({ msg: 'Successfully added a product.' })
     } catch (err) {
       return res.status(500).send({ err: 'Server issue. Try again later.' })
     }
