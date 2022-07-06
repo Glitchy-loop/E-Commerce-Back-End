@@ -13,6 +13,8 @@ app.get('/', (req, res) => {
   return res.status(200).send('Server is running...')
 })
 
+app.use(express.static('images'))
+
 app.use('/v1/users', userRoutes)
 app.use('/v1/products', productRoutes)
 app.use('/v1/orders', orderRoutes)
