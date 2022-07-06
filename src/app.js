@@ -8,9 +8,10 @@ const orderRoutes = require('./routes/v1/orders')
 const app = express()
 
 app.use(express.json())
+
 app.use(
   cors({
-    origin: 'https://comfort-e-commerce-front.web.app'
+    origin: '*'
   })
 )
 
