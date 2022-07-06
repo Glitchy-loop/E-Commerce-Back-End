@@ -22,6 +22,6 @@ app.all('*', (req, res) => {
 })
 
 app.listen(
-  serverPort || 5000,
+  process.env.port || 5000,
   console.log(`Server is running on port ${serverPort}`)
 )
