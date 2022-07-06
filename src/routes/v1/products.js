@@ -8,6 +8,7 @@ const validation = require('../../middleware/validation')
 const path = require('path')
 const { s3Upload } = require('../../middleware/s3Service')
 const router = express.Router()
+const cors = require('cors')
 
 const storage = multer.memoryStorage()
 
@@ -52,6 +53,7 @@ router.get('/list/:ids', async (req, res) => {
 
 router.post(
   '/add',
+  cors(),
   isLoggedIn,
   validation(addProductSchema),
   upload.array('img'),
