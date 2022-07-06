@@ -4,7 +4,6 @@ const { serverPort } = require('./config')
 const userRoutes = require('./routes/v1/users')
 const productRoutes = require('./routes/v1/products')
 const orderRoutes = require('./routes/v1/orders')
-
 const app = express()
 
 app.use(express.json())
