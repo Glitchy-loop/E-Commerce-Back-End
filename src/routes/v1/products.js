@@ -3,8 +3,8 @@ const mysql = require('mysql2/promise')
 const { mysqlConfig } = require('../../config')
 const multer = require('multer')
 const isLoggedIn = require('../../middleware/auth')
-const addProductSchema = require('../../middleware/schemas/productSchemas')
-const validation = require('../../middleware/validation')
+// const addProductSchema = require('../../middleware/schemas/productSchemas')
+// const validation = require('../../middleware/validation')
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, './images'),
@@ -79,7 +79,6 @@ router.post(
       //   }
 
       const file = req.files[0]
-      console.log(file)
       const result = await s3Upload(file)
       console.log(result)
       res.json({ result })

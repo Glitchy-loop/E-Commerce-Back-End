@@ -1,9 +1,10 @@
 const express = require('express')
 const cors = require('cors')
-// const { serverPort } = require('./config')
+const { serverPort } = require('./config')
 const userRoutes = require('./routes/v1/users')
 const productRoutes = require('./routes/v1/products')
 const orderRoutes = require('./routes/v1/orders')
+const path = require('path')
 
 const app = express()
 
@@ -13,6 +14,9 @@ app.use(cors())
 app.get('/', (req, res) => {
   return res.status(200).send('Server is running...')
 })
+
+app.use(express.static(path.join(__dirname, 'images')))
+
 app.use('/images', express.static('images'))
 app.use('/v1/users', userRoutes)
 app.use('/v1/products', productRoutes)
@@ -22,8 +26,6 @@ app.all('*', (req, res) => {
   return res.status(404).send('Page not found...')
 })
 
-const PORT = process.env.PORT || '8080'
-
-app.listen(process.env.PORT || 5000, () =>
-  console.log(`Server is running on port ${PORT}`)
+app.listen(serverPort, () =>
+  console.log(`Server is running on port ${serverPort}`)
 )
