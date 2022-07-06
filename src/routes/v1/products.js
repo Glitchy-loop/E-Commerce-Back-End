@@ -81,7 +81,7 @@ router.post(
       const file = req.files[0]
       const result = await s3Upload(file)
       console.log(result)
-      res.json({ result })
+      return res.send(result)
       //   await connection.end()
       // return res.status(200).send({ msg: 'Successfully added a product.' })
     } catch (err) {
