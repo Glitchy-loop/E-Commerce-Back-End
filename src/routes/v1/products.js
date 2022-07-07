@@ -63,7 +63,7 @@ router.post(
       const [data] = await connection.execute(`
       INSERT INTO products (img, title, category, price, description, inStock, archived)
       VALUES (
-        '${'111'}, ${mysql.escape(req.body.title)},${mysql.escape(
+        '111', ${mysql.escape(req.body.title)},${mysql.escape(
         req.body.category
       )},${mysql.escape(req.body.price)}, ${mysql.escape(req.body.description)}
         , ${mysql.escape(req.body.inStock)}, 0
