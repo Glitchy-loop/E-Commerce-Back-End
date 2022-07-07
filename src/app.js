@@ -7,12 +7,23 @@ const orderRoutes = require('./routes/v1/orders')
 
 const app = express()
 
+const whitelist = [
+  'https://comfort-e-commerce-front.web.app/',
+  'https://img-bucket-13378.s3.amazonaws.com/images'
+]
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error())
+    }
+  }
+}
+
 app.use(express.json())
-app.use(
-  cors({
-    origin: '*'
-  })
-)
+app.use(cors(corsOptions))
 
 app.get('/', (req, res) => {
   return res.status(200).send('Server is running...')
