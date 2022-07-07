@@ -6,12 +6,27 @@ const isLoggedIn = require('../../middleware/auth')
 const addProductSchema = require('../../middleware/schemas/productSchemas')
 const validation = require('../../middleware/validation')
 const path = require('path')
-const { s3Upload } = require('../../middleware/s3Service')
+const { s3Upload, s3Client } = require('../../middleware/s3Service')
 const router = express.Router()
+const { PutObjectCommand } = require('@aws-sdk/client-s3')
 
 const storage = multer.memoryStorage()
-
 const upload = multer({ storage })
+
+router.post('/aaa', async (req, res) => {
+  try {
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: `images/${`${new Date().getTime()}.jpg`}`,
+      Body: req.files
+    }
+
+    const results = await s3Client.send(new PutObjectCommand(params))
+    res.send(results)
+  } catch (err) {
+    return console.log(err)
+  }
+})
 
 // Get all products
 router.get('/', async (req, res) => {
