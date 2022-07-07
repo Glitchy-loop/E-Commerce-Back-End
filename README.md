@@ -6,7 +6,8 @@ products from MySQL database and displays them. Application provides registratio
 
 ## Features :
 - Accepts user auth requests : Login, Register,
-- Uses middleware to authenticate user on login
+- Uses middleware to authenticate if user is logged in,
+- Uses MySQL to store orders, products,
 
 ## Getting Started
 To get started  you can simply clone this `E-Commerce-Back-End` repository and install dependencies.
