@@ -3,8 +3,8 @@ const mysql = require('mysql2/promise')
 const { mysqlConfig } = require('../../config')
 const multer = require('multer')
 const isLoggedIn = require('../../middleware/auth')
-// const addProductSchema = require('../../middleware/schemas/productSchemas')
-// const validation = require('../../middleware/validation')
+const addProductSchema = require('../../middleware/schemas/productSchemas')
+const validation = require('../../middleware/validation')
 const path = require('path')
 const { s3Upload } = require('../../middleware/s3Service')
 const router = express.Router()
@@ -52,18 +52,13 @@ router.get('/list/:ids', async (req, res) => {
 
 router.post(
   '/add',
-  // isLoggedIn,
-  // validation(addProductSchema),
+  isLoggedIn,
+  validation(addProductSchema),
   upload.array('img'),
   async (req, res) => {
-    console.log('mama4')
     try {
-      console.log('mama5')
       const results = await s3Upload(req.files)
-      console.log('mama6')
-      // console.log(req.files)
       const connection = await mysql.createConnection(mysqlConfig)
-      console.log('mama7')
       const [data] = await connection.execute(`
       INSERT INTO products (img, title, category, price, description, inStock, archived)
       VALUES (
