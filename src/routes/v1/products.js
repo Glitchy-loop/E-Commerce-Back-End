@@ -56,10 +56,14 @@ router.post(
   // validation(addProductSchema),
   upload.array('img'),
   async (req, res) => {
+    console.log('mama4')
     try {
+      console.log('mama5')
       const results = await s3Upload(req.files)
+      console.log('mama6')
       // console.log(req.files)
       const connection = await mysql.createConnection(mysqlConfig)
+      console.log('mama7')
       const [data] = await connection.execute(`
       INSERT INTO products (img, title, category, price, description, inStock, archived)
       VALUES (
