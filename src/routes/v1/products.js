@@ -8,7 +8,7 @@ const validation = require('../../middleware/validation')
 const path = require('path')
 const { s3Upload, s3Client } = require('../../middleware/s3Service')
 const router = express.Router()
-const { PutObjectCommand } = require('@aws-sdk/client-s3')
+// const { PutObjectCommand } = require('@aws-sdk/client-s3')
 
 const storage = multer.memoryStorage()
 const upload = multer({ storage })
