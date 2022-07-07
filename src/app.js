@@ -23,7 +23,21 @@ app.use('/v1/products', productRoutes)
 app.use('/v1/orders', orderRoutes)
 
 app.all('*', (req, res) => {
-  return res.status(404).send('Page not found...')
+  // Set CORS headers: allow all origins, methods, and headers: you may want to lock this down in a production environment
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Methods', 'GET, PUT, PATCH, POST, DELETE')
+  res.header(
+    'Access-Control-Allow-Headers',
+    req.header('access-control-request-headers')
+  )
+
+  if (req.method === 'OPTIONS') {
+    // CORS Preflight
+    res.send()
+  } else {
+    // Route logika
+    return res.stastus(404).send('Page not found...')
+  }
 })
 
 app.listen(serverPort, () =>
