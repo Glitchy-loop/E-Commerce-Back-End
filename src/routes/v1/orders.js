@@ -25,6 +25,7 @@ router.get('/', async (req, res) => {
   }
 })
 
+// Create order function
 const createOrderForProduct = async (connection, productsInfos, orderId) => {
   for (let i = 0; i < productsInfos.length; i++) {
     let productInfo = productsInfos[i]
@@ -58,19 +59,17 @@ router.post('/add', isLoggedIn, async (req, res) => {
     `)
 
     const orderId = data.insertId
-
     await createOrderForProduct(connection, req.body.productsInfos, orderId)
-
     if (!data.insertId || data.affectedRows !== 1) {
       await connection.end()
       return res.status(500).send({ err: 'Server issue. Try again later.' })
     }
-
     await connection.end()
     res
       .status(200)
       .send({ msg: 'Successfully added an order.', orderId: data.insertId })
   } catch (err) {
+    console.log(err)
     return res.status(500).send({ err: 'Server issue. Try again later.' })
   }
 })
