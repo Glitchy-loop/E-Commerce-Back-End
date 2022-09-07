@@ -6,33 +6,14 @@ const isLoggedIn = require('../../middleware/auth')
 const addProductSchema = require('../../middleware/schemas/productSchemas')
 const validation = require('../../middleware/validation')
 const path = require('path')
-// const { s3Upload, s3Client } = require('../../middleware/s3Service')
 const router = express.Router()
-// const { PutObjectCommand } = require('@aws-sdk/client-s3')
-
-// const storage = multer.memoryStorage()
-// const upload = multer({ storage })
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, './src/images'),
   filename: (req, file, cb) => cb(null, `${new Date().getTime()}.jpg`)
 })
+
 const upload = multer({ storage })
-
-// router.post('/aaa', async (req, res) => {
-//   try {
-//     const params = {
-//       Bucket: process.env.AWS_BUCKET_NAME,
-//       Key: `images/${`${new Date().getTime()}.jpg`}`,
-//       Body: req.files
-//     }
-
-//     const results = await s3Client.send(new PutObjectCommand(params))
-//     res.send(results)
-//   } catch (err) {
-//     return console.log(err)
-//   }
-// })
 
 // Get all products
 router.get('/', async (req, res) => {
@@ -75,17 +56,19 @@ router.get('/list/:ids', async (req, res) => {
 router.post(
   '/add',
   isLoggedIn,
-  validation(addProductSchema),
-  upload.single('img'),
+  // validation(addProductSchema),
+  // upload.single('img'),
   async (req, res) => {
     try {
       const connection = await mysql.createConnection(mysqlConfig)
       const [data] = await connection.execute(`
       INSERT INTO products (img, title, category, price, description, inStock, archived)
       VALUES (
-        '${req.file.filename}', ${mysql.escape(req.body.title)},${mysql.escape(
-        req.body.category
-      )},${mysql.escape(req.body.price)}, ${mysql.escape(req.body.description)}
+        ${mysql.escape(req.body.img)}, ${mysql.escape(
+        req.body.title
+      )},${mysql.escape(req.body.category)},${mysql.escape(
+        req.body.price
+      )}, ${mysql.escape(req.body.description)}
         , ${mysql.escape(req.body.inStock)}, 0
         )
       `)
