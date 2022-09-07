@@ -56,8 +56,8 @@ router.get('/list/:ids', async (req, res) => {
 router.post(
   '/add',
   isLoggedIn,
-  // validation(addProductSchema),
-  // upload.single('img'),
+  validation(addProductSchema),
+  upload.single('img'),
   async (req, res) => {
     try {
       const connection = await mysql.createConnection(mysqlConfig)
