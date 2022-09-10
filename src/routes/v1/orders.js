@@ -2,8 +2,36 @@ const express = require('express')
 const mysql = require('mysql2/promise')
 const { mysqlConfig } = require('../../config')
 const isLoggedIn = require('../../middleware/auth')
+const stripe = require('stripe')(process.env.STRIPE_SECRET_TEST)
+const cors = require('cors')
 
 const router = express.Router()
+
+// Accept stripe payment
+router.post('/payment', cors(), async (req, res) => {
+  let { amount, id } = req.body
+  try {
+    const payment = await stripe.paymentIntents.create({
+      amount,
+      currency: 'EUR',
+      description: 'Product Company Description',
+      payment_method: id,
+      confirm: true
+    })
+
+    console.log('Payment', payment)
+    res.json({
+      message: 'Payment successful',
+      success: true
+    })
+  } catch (error) {
+    console.log('Error', error)
+    res.json({
+      message: 'Payment failed',
+      success: false
+    })
+  }
+})
 
 // Get all orders
 router.get('/', async (req, res) => {

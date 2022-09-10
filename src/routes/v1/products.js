@@ -57,7 +57,7 @@ router.post(
   '/add',
   isLoggedIn,
   validation(addProductSchema),
-  upload.single('img'),
+  // upload.single('img'),
   async (req, res) => {
     try {
       const connection = await mysql.createConnection(mysqlConfig)
