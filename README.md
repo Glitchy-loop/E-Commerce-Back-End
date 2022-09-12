@@ -23,16 +23,17 @@ npm start
 ```
 
 ## Dependencies used:
-* aws-sdk,
-* bcrypt,
-* cors,
-* express,
-* dotenv,
-* joi,
-* jsonwebtoken,
-* multer,
-* mysql2,
+* aws-sdk
+* bcrypt
+* cors
+* express
+* dotenv
+* joi
+* jsonwebtoken
+* multer
+* mysql2
 * path
+* stripe-js
 
 ## Tech Stack
 * NodeJs
