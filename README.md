@@ -8,6 +8,7 @@ products from MySQL database and displays them. Application provides registratio
 - Accepts user auth requests : Login, Register,
 - Uses middleware to authenticate if user is logged in,
 - Uses MySQL to store orders, products,
+- Accpts payments via STRIPE, creates order on checkout and stores data insude DB
 
 ## Getting Started
 To get started  you can simply clone this `E-Commerce-Back-End` repository and install dependencies.
@@ -23,16 +24,17 @@ npm start
 ```
 
 ## Dependencies used:
-* aws-sdk,
-* bcrypt,
-* cors,
-* express,
-* dotenv,
-* joi,
-* jsonwebtoken,
-* multer,
-* mysql2,
+* aws-sdk
+* bcrypt
+* cors
+* express
+* dotenv
+* joi
+* jsonwebtoken
+* multer
+* mysql2
 * path
+* stripe-js
 
 ## Tech Stack
 * NodeJs
