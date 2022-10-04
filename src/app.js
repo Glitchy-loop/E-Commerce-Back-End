@@ -5,6 +5,7 @@ const userRoutes = require('./routes/v1/users')
 const productRoutes = require('./routes/v1/products')
 const orderRoutes = require('./routes/v1/orders')
 const bodyParser = require('body-parser')
+const port = 3000
 
 const app = express()
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -24,6 +25,6 @@ app.all('*', (req, res) => {
   return res.status(404).send('Page not found...')
 })
 
-app.listen(serverPort, () =>
+app.listen(serverPort || port, () =>
   console.log(`Server is running on port ${serverPort}`)
 )
