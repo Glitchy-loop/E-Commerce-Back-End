@@ -2,7 +2,7 @@
 # React E-Commerce Back-End
 
 ### This is a Back-end part of an application that demonstrates E-commerce website. The application loads 
-products from MySQL database and displays them. Application provides registration form with `2 Roles` - Admin and Client
+### products from MySQL database and displays them. Application provides registration form with `2 Roles` - Admin and Client
 
 ## Features :
 - Accepts user auth requests : Login, Register,
