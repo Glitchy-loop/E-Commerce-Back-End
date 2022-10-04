@@ -1,19 +1,11 @@
 const express = require('express')
 const mysql = require('mysql2/promise')
 const { mysqlConfig } = require('../../config')
-const multer = require('multer')
 const isLoggedIn = require('../../middleware/auth')
 const addProductSchema = require('../../middleware/schemas/productSchemas')
 const validation = require('../../middleware/validation')
 const path = require('path')
 const router = express.Router()
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, './src/images'),
-  filename: (req, file, cb) => cb(null, `${new Date().getTime()}.jpg`)
-})
-
-const upload = multer({ storage })
 
 // Get all products
 router.get('/', async (req, res) => {
@@ -89,7 +81,7 @@ router.post(
 // Get product image by img ID
 router.get('/img/:id', (req, res) => {
   try {
-    let reqPath = path.join(__dirname, '../../images') // TODO
+    let reqPath = path.join(__dirname, '../../images')
     const image = `${reqPath}/${req.params.id}`
     res.sendFile(image)
   } catch (err) {
